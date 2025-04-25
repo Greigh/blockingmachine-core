@@ -471,22 +471,27 @@ const updateRules = async (existingRules: string[], newContent: string) => {
 - 📥 Remote list fetching
 - 🔄 Rule deduplication
 - ⚡ Async processing
+- 🖥️ Works with Blockingmachine Desktop
+- ⚠️ Will have issues with Blockingmachine CLI
 
 ### Upcoming Features (v1.0.0)
 - 📊 Rule statistics and analytics
 - 🔍 Enhanced pattern matching
+- 📋 Support for additional filter list formats
 - 🌐 Better network resilience
 - 🎯 Rule optimization algorithms
 - 📦 Reduced bundle size
+- 🔨 Full support for Blockingmachine CLI
 - 🧪 Extended test coverage
 
-### Future Roadmap (v1.x)
+### Future Roadmap (v1.x+)
 - 🔄 Streaming API for large files
 - 🌍 Internationalization support
 - 🔒 Enhanced security features
 - 📈 Performance improvements
 - 🧩 Plugin system
 - 🤝 Third-party integrations
+- 🛠️ Improved error handling
 
 ### Version History
 

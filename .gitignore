@@ -1,10 +1,10 @@
 # Dependencies
 node_modules/
-package-lock.json
 
-# Production build
+# Build output
 dist/
 build/
+*.tsbuildinfo
 
 # IDE
 .vscode/
