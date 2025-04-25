@@ -1,0 +1,35 @@
+{
+  "name": "@blockingmachine/core",
+  "version": "1.0.0-beta.1",
+  "description": "Core functionality for BlockingMachine",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "private": false,
+  "license": "BSD-3-Clause",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "test": "jest"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "adguard",
+    "filtering",
+    "blocking"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/greigh/Blockingmachine-core.git"
+  },
+  "bugs": {
+    "url": "https://github.com/greigh/BlockingMachine-core/issues"
+  },
+  "homepage": "https://github.com/greigh/Blockingmachine-core#readme"
+}
