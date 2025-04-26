@@ -4,7 +4,6 @@
   "description": "Core functionality for BlockingMachine",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": true,
   "license": "BSD-3-Clause",
   "scripts": {
     "build": "tsc",
