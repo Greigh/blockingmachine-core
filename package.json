@@ -4,11 +4,8 @@
   "description": "Core functionality for BlockingMachine",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "private": false,
+  "private": true,
   "license": "BSD-3-Clause",
-  "publishConfig": {
-    "access": "public"
-  },
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
@@ -39,7 +36,8 @@
   "dependencies": {
     "@adguard/aglint": "^2.0.5",
     "debug": "^4.3.4",
-    "node-fetch": "^3.3.2"
+    "node-fetch": "^3.3.2",
+    "only": "0.0.2"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
@@ -52,5 +50,9 @@
     "prettier": "^3.2.5",
     "ts-jest": "^29.1.2",
     "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=22.14.0",
+    "npm": ">=11.3.0"
   }
 }
