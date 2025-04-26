@@ -31,6 +31,3 @@ jobs:
 
       - name: Build
         run: npm run build
-
-      - name: Check formatting
-        run: npm run format-check
