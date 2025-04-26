@@ -2,7 +2,7 @@
 
 Core functionality for BlockingMachine, providing robust filter list processing and rule management for AdGuard Home and similar applications.
 
-[![npm version](https://badge.fury.io/js/@blocking-machine%2Fcore.svg)](https://www.npmjs.com/package/@blocking-machine/core)
+[![npm version](https://badge.fury.io/js/@blocking-machine%2Fcore.svg)](https://www.npmjs.com/package/@blockingmachine/core)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
 ## Features
