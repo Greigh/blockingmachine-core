@@ -67,7 +67,7 @@ export const sourceNames: SourceNameMap = {
     'uBlock Origin Filters',
   'https://pgl.yoyo.org/adservers/serverlist.php?hostformat=adblock&showintro=0&mimetype=plaintext':
     'Peter Lowes List',
-  './filters/input/personalrules.txt': 'Personal Rules',
+  './filters/input/blockingmachine-rules.txt': 'Blockingmachine Rules',
   'https://raw.githubusercontent.com/uBlockOrigin/uAssets/refs/heads/master/filters/unbreak.txt':
     'uBlock Unbreak Filter',
 };
@@ -75,8 +75,8 @@ export const sourceNames: SourceNameMap = {
 // Add type annotation to the array
 export const filterLists: FilterListInfo[] = [
   {
-    name: 'Personal Rules',
-    url: './filters/input/personalrules.txt',
+    name: 'Blockingmachine Rules',
+    url: './filters/input/blockingmachine-rules.txt',
     enabled: true,
   },
   {
@@ -218,7 +218,7 @@ export const sourceCategories: SourceCategoryMap = {
     trusted: true,
     priority: 2
   },
-  'Personal Rules': {
+  'Blockingmachine Rules': {
     category: 'custom',
     trusted: true,
     priority: 0
@@ -238,7 +238,7 @@ export const sourceValidation: SourceValidationMap = {
     'AdGuard Annoyances Filter': '24h',
     'AdGuard Social Media Filter': '24h',
     'AdGuard Mobile Filter': '24h',
-    'Personal Rules': '24h',
+    'Blockingmachine Rules': '24h',
     'AdGuard DNS Popup Hosts filter': '24h',
     "HaGeZi's Allowlist Referral": '24h',
     "HaGeZi's Windows/Office Tracker Blocklist": '24h',
@@ -247,7 +247,7 @@ export const sourceValidation: SourceValidationMap = {
     'AWAvenue Ads Rule': '24h',
   },
   trustLevel: {
-    'Personal Rules': 'trusted',
+    'Blockingmachine Rules': 'trusted',
     'AdGuard DNS Filter': 'verified',
     'uBlock Origin Filters': 'verified', 
     'AdGuard Base Filter': 'verified',

@@ -3,7 +3,7 @@ import { join } from 'path';
 export interface PathsConfig {
   input: {
     dir: string;
-    personalList: string;
+    Blockingmachine: string;
     thirdPartyFilters: string;
   };
   logs: {
@@ -30,7 +30,7 @@ export function createPaths(baseDir: string): PathsConfig {
   return {
     input: {
       dir: join(filtersDir, 'input'),
-      personalList: join(filtersDir, 'input', 'personal_list.txt'),
+      Blockingmachine: join(filtersDir, 'input', 'Blockingmachine-rules.txt'),
       thirdPartyFilters: join(filtersDir, 'input', 'thirdPartyFilters.txt'),
     },
     logs: {

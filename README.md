@@ -5,6 +5,12 @@ Core functionality for BlockingMachine, providing robust filter list processing 
 [![npm version](https://badge.fury.io/js/@blockingmachine%2Fcore.svg)](https://www.npmjs.com/package/@blockingmachine/core)
 [![License: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
+## Related Projects
+
+- [BlockingMachine Desktop](https://github.com/greigh/Blockingmachine) - Desktop application
+- [BlockingMachine CLI](https://github.com/greigh/Blockingmachine-cli) - Command line interface
+- [Blockingmachine Database](https://github.com/greigh/Blockingmachine-database) - Filter list repository
+
 ## Features
 
 - 🚀 Fast filter list processing
@@ -464,15 +470,16 @@ const updateRules = async (existingRules: string[], newContent: string) => {
 
 ## Timeline
 
-### Current Release (v1.0.0-beta.1)
+### Current Release (v1.0.0-beta.3)
 - 🎉 Initial public release
 - 🚀 Core functionality implementation
 - 💪 TypeScript support
 - 📥 Remote list fetching
 - 🔄 Rule deduplication
 - ⚡ Async processing
-- 🖥️ Works with Blockingmachine Desktop
-- ⚠️ Will have issues with Blockingmachine CLI
+- 🖥️ Works with BlockingMachine Desktop
+- ✅ Improved compatibility with BlockingMachine CLI
+- 🐞 Bug fixes and performance improvements
 
 ### Upcoming Features (v1.0.0)
 - 📊 Rule statistics and analytics
@@ -481,7 +488,6 @@ const updateRules = async (existingRules: string[], newContent: string) => {
 - 🌐 Better network resilience
 - 🎯 Rule optimization algorithms
 - 📦 Reduced bundle size
-- 🔨 Full support for Blockingmachine CLI
 - 🧪 Extended test coverage
 
 ### Future Roadmap (v1.x+)
@@ -495,7 +501,22 @@ const updateRules = async (existingRules: string[], newContent: string) => {
 
 ### Version History
 
-#### 1.0.0-beta.1 (Current)
+#### 1.0.0-beta.3 (Current)
+- Improved CLI compatibility
+- Fixed several critical bugs
+- Performance optimizations
+- Documentation updates
+- Added more comprehensive examples
+- Fixed issues with NPM package integration
+
+#### 1.0.0-beta.2
+- Added support for additional filter formats
+- Enhanced error handling
+- Improved documentation
+- Fixed dependency issues
+- Fixed CLI integration bugs
+
+#### 1.0.0-beta.1
 - Initial public release
 - Core functionality stable
 - Basic documentation
