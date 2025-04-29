@@ -1,4 +1,4 @@
-# Contributing to @blocking-machine/core
+# Contributing to @blockingmachine/core
 
 Thank you for your interest in contributing to BlockingMachine! This document provides guidelines and instructions for contributing.
 
@@ -90,7 +90,7 @@ npm test
 
 ## License and Copyright
 
-By contributing to @blocking-machine/core, you agree that your contributions will be licensed under the BSD 3-Clause License.
+By contributing to @blockingmachine/core, you agree that your contributions will be licensed under the BSD 3-Clause License.
 
 ### Copyright Notice Requirements
 

@@ -3,7 +3,7 @@ import { sourceNames } from './sources.js';
 import { performance } from 'perf_hooks';
 import { Linter, LinterResult, LinterProblem } from '@adguard/aglint';
 // vvv Import StoredRule, RuleMetadata, RuleClassificationType vvv
-import { RuleStore, RuleClassificationType, type RuleMetadata, type StoredRule } from './RuleStore.js';
+import { RuleStore, RuleClassificationType, type RuleMetadata, type StoredRule, type RuleType } from './RuleStore.js';
 // vvv Import the external metadata creation function vvv
 import { createRuleMetadata } from './createMetadata.js';
 // ^^^ Imports ^^^
@@ -60,57 +60,41 @@ interface FilterMetadata {
     version?: string;
     homepage?: string;
     expires?: string;
-    // Add other potential metadata fields
-    sources: string[]; // Ensure sources is always present
-    name?: string; // Added for consistency if title is missing
+    sources: string[];
+    name?: string;
 }
 
 // --- Type sourceNames explicitly ---
 const typedSourceNames: Record<string, string> = sourceNames;
 
-// vvv MODIFY THIS FUNCTION vvv
-export function parseFilterList(content: string, sourceUrl?: string): StoredRule[] { // <<< Change return type
-  const rules: StoredRule[] = []; // <<< Array of StoredRule
+export function parseFilterList(content: string, sourceUrl?: string): StoredRule[] {
+  const rules: StoredRule[] = [];
   const lines = content.split('\n');
-  const source = sourceUrl || 'unknown'; // Use sourceUrl for metadata
-
-  // Instantiate RuleProcessor temporarily ONLY to access classifyRule
-  // (Ideally, classifyRule would be static or moved outside the class)
+  const source = sourceUrl || 'unknown';
   const tempProcessor = new RuleProcessor();
 
   for (const line of lines) {
     const trimmedLine = line.trim().replace(/\r$/, '');
     if (!trimmedLine) continue;
 
-    // Basic Comment/Header Skip
-    if (trimmedLine.startsWith('!') || (trimmedLine.startsWith('#') && !/[#@?$,.]/.test(trimmedLine.substring(1))) || (trimmedLine.startsWith('[') && trimmedLine.endsWith(']'))) {
-      continue;
-    }
-
-    // Classify the rule to determine its type
-    const ruleType = tempProcessor.classifyRule(trimmedLine); // <<< Use classifyRule
-
-    // Only process rules that have a valid, non-comment/meta type
+    const ruleType = tempProcessor.classifyRule(trimmedLine);
+    
     if (ruleType && ruleType !== 'comment' && ruleType !== 'preprocessor' && ruleType !== 'hint') {
-      // Create metadata using the external function
-      const metadata: RuleMetadata = createRuleMetadata(source, ruleType, trimmedLine); // <<< Use createRuleMetadata
-
-      // Create the StoredRule object
+      const metadata = createRuleMetadata(source, ruleType as RuleType, trimmedLine);
+      
       rules.push({
-          originalRule: trimmedLine, // Store original rule string
-          hash: '', // Hash can be generated later if needed
-          type: ruleType, // Store the determined type
-          metadata: metadata // Assign the created metadata
+        raw: trimmedLine,
+        originalRule: trimmedLine,
+        hash: '',
+        type: ruleType as RuleType,
+        isException: trimmedLine.startsWith('@@'), // Add this line
+        metadata
       });
     }
-    // Ignore unrecognized rules (type === null) in this basic parser
   }
-  return rules; // <<< Return array of StoredRule
+  return rules;
 }
-// ^^^ MODIFY THIS FUNCTION ^^^
 
-
-// vvv MODIFY THIS FUNCTION vvv
 export async function downloadAndParseSource(url: string): Promise<StoredRule[]> { // <<< Change return type
   console.log(`Processing source: ${url}`);
   const content = await fetchContent(url);
@@ -217,7 +201,7 @@ export class RuleProcessor {
 
     // 8. Unblocking/Exception Rules (can have DNS or Browser mods)
     if (trimmedRule.startsWith('@@')) {
-      return 'unblocking'; // Simplified: classify as unblocking if starts with @@
+      return 'unblocking';
     }
 
     // 9. Network Rules (Blocking) - DNS context or general
@@ -419,9 +403,6 @@ export class RuleProcessor {
       return null;
     }
   }
-
-  // --- REMOVE the createMetadata method from the CLASS ---
-  // createMetadata(...) { ... } // <<< DELETE THIS METHOD
 
   getErrors(): ProcessorErrors {
     return this.errors;

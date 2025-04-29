@@ -3,27 +3,89 @@ import { RuleProcessor } from './RuleProcessor.js';
 import crypto from 'crypto';
 import { performance } from 'perf_hooks';
 
+// --- Base Types ---
+export type RuleType = 
+  | 'domain' 
+  | 'regex' 
+  | 'exception' 
+  | 'cosmetic' 
+  | 'unknown'
+  | 'blocking'
+  | 'unblocking'
+  | 'scriptlet'
+  | 'csp'
+  | 'redirect'
+  | 'replace'
+  | 'removeheader'
+  | 'removeparam'
+  | 'parameter'  // Add parameter type
+  | 'html-filtering'
+  | 'permissions'
+  | 'extended-css';
 
-// --- Define Interfaces for Core Logic ---
+export type GenericRuleType = Extract<
+  RuleType,
+  | 'scriptlet'
+  | 'csp'
+  | 'redirect'
+  | 'replace'
+  | 'removeheader'
+  | 'removeparam'
+  | 'parameter'  // Add parameter
+  | 'html-filtering'
+  | 'permissions'
+  | 'extended-css'
+>;
 
-// Represents the metadata associated with a rule
-export interface RuleMetadata { // <<< Add export
-  sources?: string[];
-  domain?: string | null;
-  selector?: string;
-  [key: string]: any;
+export type RuleClassificationType = 
+  | RuleType 
+  | 'preprocessor'
+  | 'hint'
+  | 'comment'
+  | null;
+
+// --- Rule Interfaces ---
+export interface RuleModifier {
+  type: string;
+  value?: string;
+  domains?: string[];
 }
 
-// Represents the structure of a rule object stored in the maps
-export interface StoredRule { // <<< Add export
+export interface RuleMetadata {
+  sources: string[];
+  dateAdded: Date;
+  lastUpdated: Date;
+  enabled: boolean;
+  sourceInfo: {
+    category: string;
+    trusted: boolean;
+    url: string;
+    priority: number;
+  };
+  tags: string[];
+  domain?: string;
+  selector?: string;
+}
+
+export interface StoredRule {
+  raw: string;
   originalRule: string;
   hash: string;
-  type: string;
+  type: RuleType;
+  domain?: string;
+  isException?: boolean; // Add this field
   metadata: RuleMetadata;
+  variants?: Array<{
+    rule: string;
+    source: string;
+    dateAdded: Date;
+    modifiers: RuleModifier[];
+    tags: string[];
+  }>;
 }
 
-// Represents the structure of the statistics object
-export interface RuleStats { // <<< Add export
+// --- Statistics Interface ---
+export interface RuleStats {
   totalProcessed: number;
   duplicates: number;
   merged: number;
@@ -43,48 +105,9 @@ export interface RuleStats { // <<< Add export
   'html-filtering': number;
   permissions: number;
   'extended-css': number;
-  // Add any other specific types you track
 }
 
-// --- Define Type for rule types handled by addGenericRule ---
-export type GenericRuleType = // <<< Add export
-  | 'scriptlet'
-  | 'csp'
-  | 'redirect'
-  | 'replace'
-  | 'removeheader'
-  | 'removeparam' // Explicitly include 'removeparam'
-  | 'parameter' // Explicitly include 'parameter'
-  | 'html-filtering'
-  | 'permissions'
-  | 'extended-css';
-
-// --- Define ALL possible classification results ---
-export type RuleClassificationType = // <<< Add export
-  | 'blocking'
-  | 'unblocking'
-  | 'cosmetic'
-  | 'scriptlet'
-  | 'csp'
-  | 'redirect'
-  | 'replace'
-  | 'removeheader'
-  | 'removeparam'
-  | 'parameter'
-  | 'html-filtering'
-  | 'permissions'
-  | 'extended-css'
-  | 'preprocessor'
-  | 'hint'
-  | 'comment' // Include comment if classifyRule can return it
-  | string // Add 'string' as a fallback if classifyRule might return unknown types
-  | null // Add null/undefined if classifyRule can return these
-  | undefined;
-
-
-// --- End Interfaces/Types ---
-
-
+// --- RuleStore Class ---
 export class RuleStore {
   // --- Class Properties with Types ---
   private ruleProcessor: RuleProcessor;
@@ -150,8 +173,6 @@ export class RuleStore {
     };
   }
 
-  // --- Removed init() method (no DB loading) ---
-
   // Helper to generate SHA-256 hash
   private generateHash(rule: string): string {
     return crypto.createHash('sha256').update(rule).digest('hex');
@@ -177,10 +198,25 @@ export class RuleStore {
 
     if (!existingRule) {
       map.set(key, {
+        raw: originalRule,
         originalRule: originalRule,
         hash: ruleHash,
-        metadata: metadata,
-        type: type, // Store the original type ('parameter' or 'removeparam')
+        type: type as RuleType,
+        metadata: {
+          sources: metadata.sources || [],
+          dateAdded: new Date(),
+          lastUpdated: new Date(),
+          enabled: true,
+          sourceInfo: {
+            category: metadata.sourceInfo?.category || 'unknown',
+            trusted: false,
+            url: metadata.sourceInfo?.url || '',
+            priority: metadata.sourceInfo?.priority || 0  // Add default priority
+          },
+          tags: [],
+          domain: metadata.domain || undefined,
+          selector: metadata.selector || undefined
+        }
       });
       // Increment the specific stat count using the mapped statType
       if (this.stats[statType] !== undefined) {
@@ -232,7 +268,11 @@ export class RuleStore {
     }
 
     // Create metadata
-    const metadata = createRuleMetadata(sourceName, type, trimmedRule); // Use imported function
+    const metadata = createRuleMetadata(
+      sourceName, 
+      type === 'preprocessor' || type === 'hint' ? 'unknown' : type, // Convert non-RuleType to 'unknown'
+      trimmedRule
+    );
     if (!metadata.sources) {
         metadata.sources = [sourceName];
     } else if (!Array.isArray(metadata.sources)) {
@@ -368,10 +408,24 @@ export class RuleStore {
       }
 
       const ruleData: StoredRule = {
-          originalRule,
-          hash: ruleHash,
-          metadata: { ...metadata, domain: isHashKey ? null : key }, // Store domain only if key isn't hash
-          type: type,
+        raw: originalRule,
+        originalRule,
+        hash: ruleHash,
+        type: type,
+        metadata: {
+          sources: metadata.sources || [],
+          dateAdded: new Date(),
+          lastUpdated: new Date(),
+          enabled: true,
+          sourceInfo: {
+            category: metadata.sourceInfo?.category || 'unknown',
+            trusted: false,
+            url: metadata.sourceInfo?.url || '',
+            priority: metadata.sourceInfo?.priority || 0
+          },
+          tags: [],
+          domain: isHashKey ? undefined : key
+        }
       };
 
       ruleMap.set(key, ruleData);
@@ -409,10 +463,24 @@ export class RuleStore {
       }
 
       const ruleData: StoredRule = {
-          originalRule,
-          hash: ruleHash,
-          metadata: { ...metadata, selector: key },
-          type: 'cosmetic',
+        raw: originalRule,
+        originalRule,
+        hash: ruleHash,
+        type: 'cosmetic',
+        metadata: {
+          sources: metadata.sources || [],
+          dateAdded: new Date(),
+          lastUpdated: new Date(),
+          enabled: true,
+          sourceInfo: {
+            category: metadata.sourceInfo?.category || 'unknown',
+            trusted: false,
+            url: metadata.sourceInfo?.url || '',
+            priority: metadata.sourceInfo?.priority || 0
+          },
+          tags: [],
+          selector: key
+        }
       };
 
       this.cosmeticRules.set(key, ruleData);

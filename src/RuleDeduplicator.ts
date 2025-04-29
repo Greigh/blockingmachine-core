@@ -1,7 +1,29 @@
-import { StoredRule, RuleMetadata } from './RuleStore.js'; // Import necessary types
+import { StoredRule, RuleMetadata } from './RuleStore.js';
+
+// Extend the imported RuleMetadata to include missing properties
+// Make required fields non-optional to match RuleMetadata
+interface ExtendedRuleMetadata {
+  // Match the non-optional fields from RuleMetadata
+  sources: string[]; // Remove the optional marker (?)
+  dateAdded: Date; // Make this required to match RuleMetadata
+  lastUpdated: Date; // Make this required to match RuleMetadata
+  enabled: boolean; // Make this required to match RuleMetadata
+  sourceInfo: {
+    category: string;
+    trusted: boolean;
+    url: string;
+    priority: number;
+  };
+  tags: string[]; // Make this required to match RuleMetadata
+  
+  // Optional fields can remain optional
+  domain?: string;
+  selector?: string;
+  modifiers?: string[];
+  attribution?: string;
+}
 
 // --- Interfaces/Types ---
-
 interface DeduplicatorStats {
   total: number;
   duplicates: number;
@@ -13,19 +35,17 @@ interface DeduplicatorStats {
   duplicatePercent?: string; // Added for final stats
 }
 
-// Define a type for the merged metadata, potentially extending RuleMetadata
-interface MergedRuleMetadata extends RuleMetadata {
-  alternatives?: string[]; // Add the alternatives property
+// Use our extended RuleMetadata
+interface MergedRuleMetadata extends ExtendedRuleMetadata {
+  alternatives?: string[];
 }
 
 export class RuleDeduplicator {
   // --- Properties with Types ---
-  // private issues: Map<string, any>; // Seems unused, consider removing if not needed
   private filteredRules: Map<string, StoredRule>;
   private stats: DeduplicatorStats;
 
   constructor() {
-    // this.issues = new Map(); // Remove if unused
     this.filteredRules = new Map();
     this.stats = {
       total: 0,
@@ -41,14 +61,14 @@ export class RuleDeduplicator {
    * @param rule The original rule string.
    * @returns A normalized string key, or an empty string if the rule is invalid/empty.
    */
-  stripRule(rule: string | null | undefined): string { // Add parameter type and return type
+  stripRule(rule: string | null | undefined): string {
     if (!rule) return '';
     try {
-      const originalRule = rule; // Keep original for reference
+      const originalRule = rule;
       let stripped = rule;
       const isException = stripped.startsWith('@@');
       if (isException) {
-        stripped = stripped.slice(2);
+        stripped = stripped.slice(2); // Here the @@ prefix is removed
       }
 
       // 1. Extract and Normalize Key Modifiers/Selectors
@@ -108,13 +128,14 @@ export class RuleDeduplicator {
         parts.extendedSelector && `extsel=${parts.extendedSelector}`,
       ].filter(Boolean); // Filter out empty strings
 
+      // The prefix is added back only at the very end
       let normalized = components.join('|');
       if (isException) normalized = '@@' + normalized;
 
       return normalized;
-    } catch (error: any) { // Add type to error
+    } catch (error: any) {
       console.warn(`Failed to strip rule: ${rule}`, error.message);
-      return rule; // Return original rule on error as a fallback key? Or empty string? Returning original might group errors.
+      return rule;
     }
   }
 
@@ -219,9 +240,6 @@ export class RuleDeduplicator {
     return Array.from(this.filteredRules.values());
   }
 
-  // generateHash seems unused, consider removing if not needed
-  // generateHash(str: string): string { ... }
-
   /**
    * Selects the "best" rule from a group of duplicates based on a scoring system.
    * @param rules An array of StoredRule objects that are duplicates.
@@ -258,43 +276,43 @@ export class RuleDeduplicator {
    * @param bestRule The StoredRule selected as the best.
    * @returns The merged RuleMetadata object.
    */
-  mergeMetadata(group: StoredRule[], bestRule: StoredRule): MergedRuleMetadata { // Add parameter types and return type
+  mergeMetadata(group: StoredRule[], bestRule: StoredRule): ExtendedRuleMetadata { // Add parameter types and return type
     try {
       // Start with a copy of the best rule's metadata or an empty object
-      const merged: MergedRuleMetadata = { ...(bestRule.metadata || {}) };
+      const merged: MergedRuleMetadata = { ...(bestRule.metadata || {}) } as MergedRuleMetadata;
 
       // Combine sources
-      const sources = new Set<string>(merged.sources || []); // Use Set<string>
+      const sources = new Set<string>(merged.sources || []);
       group.forEach((rule) => {
-        // Ensure rule and metadata exist
         if (rule?.metadata?.sources) {
           rule.metadata.sources.forEach((source) => {
-              if (typeof source === 'string') sources.add(source); // Ensure source is string
+            if (typeof source === 'string') sources.add(source);
           });
         }
       });
       merged.sources = Array.from(sources);
 
-      // Merge dates - keep earliest valid date
+      // Merge dates - keep earliest valid date string
       const dates = group
-        .map((rule) => rule?.metadata?.dateAdded) // Safely access dateAdded
-        .filter((date): date is string => typeof date === 'string' && !isNaN(Date.parse(date))) // Ensure it's a valid date string
-        .sort();
+        .map((rule) => rule?.metadata?.dateAdded)
+        .filter((date): date is Date => date instanceof Date || 
+          (typeof date === 'string' && !isNaN(Date.parse(date))))
+        .map(date => date instanceof Date ? date : new Date(date))
+        .sort((a, b) => a.getTime() - b.getTime());
+      
       if (dates.length > 0) {
         merged.dateAdded = dates[0];
-      } else if (!merged.dateAdded) {
-          // If no valid dates found and bestRule didn't have one, set a default
-          merged.dateAdded = new Date().toISOString();
+      } else {
+        merged.dateAdded = new Date();
       }
 
-      // Combine modifiers (assuming metadata.modifiers is array of strings for now)
-      // If it's Modifier objects, merging needs different logic (e.g., based on type)
-      const modifiers = new Set<string>(merged.modifiers || []); // Use Set<string>
+      // Combine modifiers
+      const modifiers = new Set<string>((merged.modifiers as string[]) || []);
       group.forEach((rule) => {
-        if (rule?.metadata?.modifiers) {
-          // Assuming modifiers is string[] based on getRuleScore logic
-          rule.metadata.modifiers.forEach((mod: any) => { // Use any temporarily if type is uncertain
-              if (typeof mod === 'string') modifiers.add(mod);
+        const ruleMetadata = rule?.metadata as ExtendedRuleMetadata;
+        if (ruleMetadata?.modifiers) {
+          ruleMetadata.modifiers.forEach((mod) => {
+            if (typeof mod === 'string') modifiers.add(mod);
           });
         }
       });
@@ -302,18 +320,41 @@ export class RuleDeduplicator {
 
       // Keep track of original rules (alternatives)
       merged.alternatives = group
-        .filter((r) => r !== bestRule && r?.originalRule) // Ensure rule and originalRule exist
-        .map((r) => r.originalRule); // Map guaranteed existing originalRule
+        .filter((r) => r !== bestRule && r?.originalRule)
+        .map((r) => r.originalRule);
 
-      // Ensure essential fields exist if missing from bestRule's initial metadata
-      if (!merged.lastUpdated) merged.lastUpdated = new Date().toISOString();
-      // Add other defaults if necessary
-
+      // Ensure all required fields have values
+      if (!merged.dateAdded) merged.dateAdded = new Date();
+      if (!merged.lastUpdated) merged.lastUpdated = new Date();
+      if (merged.enabled === undefined) merged.enabled = true;
+      if (!merged.sourceInfo) {
+        merged.sourceInfo = {
+          category: 'unknown',
+          trusted: false,
+          url: '',
+          priority: 0
+        };
+      }
+      if (!merged.tags) merged.tags = [];
+      
       return merged;
-    } catch (error: any) { // Add type to error
+    } catch (error: any) {
       console.warn('Failed to merge metadata:', error.message);
-      // Return bestRule's metadata or a basic default on error
-      return { ...(bestRule.metadata || {}), sources: bestRule.metadata?.sources || [] };
+      // Return with all required fields populated
+      return { 
+        ...bestRule.metadata,
+        sources: bestRule.metadata?.sources || [],
+        dateAdded: bestRule.metadata?.dateAdded || new Date(),
+        lastUpdated: bestRule.metadata?.lastUpdated || new Date(),
+        enabled: bestRule.metadata?.enabled !== undefined ? bestRule.metadata.enabled : true,
+        sourceInfo: bestRule.metadata?.sourceInfo || {
+          category: 'unknown',
+          trusted: false,
+          url: '',
+          priority: 0
+        },
+        tags: bestRule.metadata?.tags || []
+      } as ExtendedRuleMetadata;
     }
   }
 
@@ -329,18 +370,20 @@ export class RuleDeduplicator {
 
     // Base scores
     if (rule.metadata.sources?.length) score += rule.metadata.sources.length * 2;
-    // Assuming modifiers is string[] for scoring based on mergeMetadata logic
-    if (Array.isArray(rule.metadata.modifiers) && rule.metadata.modifiers.length > 0) {
-        score += rule.metadata.modifiers.length * 2;
+    
+    // Cast to ExtendedRuleMetadata to access modifiers and attribution
+    const metadata = rule.metadata as ExtendedRuleMetadata;
+    if (Array.isArray(metadata.modifiers) && metadata.modifiers.length > 0) {
+      score += metadata.modifiers.length * 2;
     }
-    if (rule.metadata.dateAdded) score += 5; // Consider date validity?
+    if (metadata.dateAdded) score += 5; // Consider date validity?
 
     // Bonus scores
     if (originalRuleLower.includes('$important')) score += 10;
     // Access sourceInfo safely
-    if (rule.metadata.sourceInfo?.trusted) score += 15;
+    if (metadata.sourceInfo?.trusted) score += 15;
     // Access attribution safely
-    if (rule.metadata.attribution?.toLowerCase().includes('daniel hipskind')) score += 20; // Lowercase for comparison
+    if (metadata.attribution?.toLowerCase().includes('daniel hipskind')) score += 20; // Lowercase for comparison
 
     // Domain-specific rules
     if (originalRuleLower.includes('$domain=')) score += 8;

@@ -10,9 +10,6 @@ export interface FilterListInfo {
 // Type for the sourceNames object (URL -> Friendly Name mapping)
 export type SourceNameMap = Record<string, string>;
 
-// Type for sourceCategories (Category -> Array of Friendly Names)
-export type SourceCategoryMap = Record<string, string[]>;
-
 // Type for sourceValidation (Validation Type -> Friendly Name -> Value mapping)
 export type SourceValidationMap = Record<string, Record<string, string>>;
 
@@ -24,6 +21,15 @@ export interface SourceConfig {
   userAgent: string;
   additionalHeaders: Record<string, string>;
 }
+
+// Add these interfaces
+export interface SourceInfo {
+  category: string;
+  trusted: boolean;
+  priority: number;
+}
+
+export type SourceCategoryMap = Record<string, SourceInfo>;
 
 
 // --- Exports with Types ---
@@ -165,14 +171,58 @@ export const filterLists: FilterListInfo[] = [
   },
 ];
 
-// Add type annotation
+// Update sourceCategories to use SourceInfo objects
 export const sourceCategories: SourceCategoryMap = {
-  primary: ['AdGuard DNS Filter', 'uBlock Origin Filters'], // Ensure names match filterLists/sourceNames
-  privacy: ['Peter Lowes List', 'OISD Blocklist Small'],
-  annoyance: ["Fanboy's Annoyance List", 'AdGuard Annoyances Filter'],
-  social: ['AdGuard Social Media Filter'],
-  mobile: ['AdGuard Mobile Filter', 'AWAvenue Ads Rule'],
-  custom: ['Personal Rules'], // Changed from 'Daniel Hipskind - Personal List' to match sourceNames/filterLists
+  'AdGuard DNS Filter': {
+    category: 'primary',
+    trusted: true,
+    priority: 1
+  },
+  'uBlock Origin Filters': {
+    category: 'primary',
+    trusted: true,
+    priority: 1
+  },
+  'Peter Lowes List': {
+    category: 'privacy',
+    trusted: true,
+    priority: 2
+  },
+  'OISD Blocklist Small': {
+    category: 'privacy',
+    trusted: true,
+    priority: 2
+  },
+  "Fanboy's Annoyance List": {
+    category: 'annoyance',
+    trusted: true,
+    priority: 3
+  },
+  'AdGuard Annoyances Filter': {
+    category: 'annoyance',
+    trusted: true,
+    priority: 3
+  },
+  'AdGuard Social Media Filter': {
+    category: 'social',
+    trusted: true,
+    priority: 3
+  },
+  'AdGuard Mobile Filter': {
+    category: 'mobile',
+    trusted: true,
+    priority: 2
+  },
+  'AWAvenue Ads Rule': {
+    category: 'mobile',
+    trusted: true,
+    priority: 2
+  },
+  'Personal Rules': {
+    category: 'custom',
+    trusted: true,
+    priority: 0
+  }
 };
 
 // Add type annotation
@@ -225,8 +275,5 @@ export const sourceConfig: SourceConfig = {
   maxRedirects: 5,
   userAgent: 'BlockingMachine/1.0',
   additionalHeaders: {
-    // Removed Content-Type and Accept as they are usually not needed for fetching plain text filter lists
-    // 'Content-Type': 'application/json',
-    // 'Accept': 'application/json',
   },
 };

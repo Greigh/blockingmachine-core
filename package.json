@@ -1,12 +1,19 @@
 {
   "name": "@blockingmachine/core",
   "version": "1.0.0-beta.1",
-  "description": "Core functionality for BlockingMachine",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "license": "BSD-3-Clause",  
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "license": "BSD-3-Clause",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "prepublishOnly": "npm run build",
     "test": "jest",
     "type-check": "tsc --noEmit",
@@ -34,14 +41,18 @@
   "homepage": "https://github.com/greigh/Blockingmachine-core#readme",
   "dependencies": {
     "@adguard/aglint": "^2.0.5",
+    "chalk": "4.1.2",
     "debug": "^4.3.4",
-    "node-fetch": "^3.3.2",
-    "only": "0.0.2"
+    "node-fetch": "3.3.2",
+    "only": "0.0.2",
+    "progress": "2.0.3",
+    "winston": "3.17.0"
   },
   "devDependencies": {
     "@types/debug": "^4.1.12",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.16",
+    "@types/progress": "2.0.7",
     "@typescript-eslint/eslint-plugin": "^8.31.0",
     "@typescript-eslint/parser": "^8.31.0",
     "eslint": "^8.56.0",
@@ -54,7 +65,7 @@
     "node": ">=22.14.0",
     "npm": ">=11.3.0"
   },
-"publishConfig": {
+  "publishConfig": {
     "access": "public",
     "registry": "https://registry.npmjs.org/",
     "scope": "@blockingmachine"

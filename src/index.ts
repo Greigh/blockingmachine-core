@@ -1,10 +1,24 @@
-// Export necessary functions/modules from the core package
+// Add this explicit export for FilterMetaConfig
+export type { FilterMetaConfig } from './config/meta.js';
 
-export { fetchContent } from './fetch.js';
-export { RuleDeduplicator } from './RuleDuplicator.js';
-export { parseFilterList, downloadAndParseSource, RuleProcessor } from './RuleProcessor.js'; // Added downloadAndParseSource here
-export { RuleStore, type StoredRule, type RuleMetadata, type RuleStats } from './RuleStore.js'; // Export RuleStore and its types
-export { createRuleMetadata } from './createMetadata.js';
-export { sourceCategories } from './sources.js';
+// Make sure other exports are also included
+export { defaultFilterMeta } from './config/meta.js';
+export { createPaths } from './config/paths.js';
+export { defaultPerformance } from './config/performance.js';
+export { exportWithOptions } from './export/index.js';
+export { RuleType, RuleModifier, RuleMetadata } from './RuleStore.js';
+export { FilterFormat, generateFilterList } from './export/advanced-formatter.js';
+export { RuleDeduplicator } from './RuleDeduplicator.js';
+export { downloadAndParseSource, parseFilterList } from './RuleProcessor.js';
+export { RuleStore } from './RuleStore.js';
 
-// Add any other exports needed by other packages
+// Other type exports
+export type { ExportOptions, FilterListMetadata, SupportedFormat } from './types.js';
+
+// Other existing exports
+export * from './RuleStore.js';
+export * from './RuleProcessor.js';
+export * from './cli-exports.js';
+export * from './export/advanced-formatter.js';
+export * from './export/formatters.js';
+
