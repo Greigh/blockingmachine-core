@@ -2,6 +2,11 @@
   "name": "@blockingmachine/core",
   "version": "1.0.0-beta.3",
   "type": "module",
+  "author": {
+    "name": "Daniel Hipskind",
+    "email": "me@danielhipskind.com",
+    "url": "https://danielhipskind.com"
+  },
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -66,7 +71,6 @@
     "typescript-eslint": "^8.31.1"
   },
   "engines": {
-    "node": ">=14.16",
     "npm": ">=11.3.0"
   },
   "publishConfig": {
