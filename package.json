@@ -18,7 +18,7 @@
   },
   "license": "BSD-3-Clause",
   "scripts": {
-    "build": "tsc --skipLibCheck && chmod +x dist/index.js",
+    "build": "tsc --skipLibCheck",
     "test": "jest",
     "type-check": "tsc --noEmit",
     "format": "prettier --write .",
