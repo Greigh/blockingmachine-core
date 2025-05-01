@@ -90,7 +90,7 @@ export async function fetchContent(url: string): Promise<string | null> {
   const options: RequestInit = {
     headers: {
       'User-Agent':
-        'BlockingMachine/1.0 (+https://github.com/danielhipskind/blockingmachine)',
+        'Blockingmachine/1.0 (+https://github.com/danielhipskind/blockingmachine)',
     },
   };
 

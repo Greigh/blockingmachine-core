@@ -16,7 +16,7 @@ export interface FilterMetaConfig {
 }
 
 export const defaultFilterMeta = {
-  title: 'BlockingMachine AdGuard List',
+  title: 'Blockingmachine AdGuard List',
   description: 'Combined filter list optimized for AdGuard',
   madeby: 'Daniel Hipskind',
   homepage: 'https://github.com/danielhipskind/blockingmachine',

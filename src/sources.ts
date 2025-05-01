@@ -273,7 +273,7 @@ export const sourceConfig: SourceConfig = {
   retries: 3,
   timeout: 30000,
   maxRedirects: 5,
-  userAgent: 'BlockingMachine/1.0',
+  userAgent: 'Blockingmachine/1.0',
   additionalHeaders: {
   },
 };

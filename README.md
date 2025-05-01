@@ -1,6 +1,6 @@
 # @blockingmachine/core
 
-Core functionality for BlockingMachine, providing robust filter list processing and rule management for AdGuard Home and similar applications.
+Core functionality for Blockingmachine, providing robust filter list processing and rule management for AdGuard Home and similar applications.
 
 [![LICENSE: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub Actions](https://github.com/greigh/blockingmachine-cli/workflows/CI/badge.svg)](https://github.com/greigh/blockingmachine-cli/actions)
@@ -12,8 +12,8 @@ Core functionality for BlockingMachine, providing robust filter list processing 
 
 ## Related Projects
 
-- [BlockingMachine Desktop](https://github.com/greigh/Blockingmachine) - Desktop application
-- [BlockingMachine CLI](https://github.com/greigh/Blockingmachine-cli) - Command line interface
+- [Blockingmachine Desktop](https://github.com/greigh/Blockingmachine) - Desktop application
+- [Blockingmachine CLI](https://github.com/greigh/Blockingmachine-cli) - Command line interface
 - [Blockingmachine Database](https://github.com/greigh/Blockingmachine-database) - Filter list repository
 
 ## Features
@@ -197,14 +197,14 @@ Under the following conditions:
 
 ## Related Projects
 
-- [BlockingMachine Desktop](https://github.com/yourusername/BlockingMachine) - Desktop application
-- [BlockingMachine CLI](https://github.com/yourusername/blockingmachine-cli) - Command line interface
+- [Blockingmachine Desktop](https://github.com/yourusername/Blockingmachine) - Desktop application
+- [Blockingmachine CLI](https://github.com/yourusername/blockingmachine-cli) - Command line interface
 
 ## Support
 
-- 📝 [Documentation](https://github.com/yourusername/BlockingMachine/wiki)
-- 🐛 [Issue Tracker](https://github.com/yourusername/BlockingMachine/issues)
-- 💬 [Discussions](https://github.com/yourusername/BlockingMachine/discussions)
+- 📝 [Documentation](https://github.com/yourusername/Blockingmachine/wiki)
+- 🐛 [Issue Tracker](https://github.com/yourusername/Blockingmachine/issues)
+- 💬 [Discussions](https://github.com/yourusername/Blockingmachine/discussions)
 
 ## Acknowledgments
 
@@ -482,8 +482,8 @@ const updateRules = async (existingRules: string[], newContent: string) => {
 - 📥 Remote list fetching
 - 🔄 Rule deduplication
 - ⚡ Async processing
-- 🖥️ Works with BlockingMachine Desktop
-- ✅ Improved compatibility with BlockingMachine CLI
+- 🖥️ Works with Blockingmachine Desktop
+- ✅ Improved compatibility with Blockingmachine CLI
 - 🐞 Bug fixes and performance improvements
 
 ### Upcoming Features (v1.0.0)

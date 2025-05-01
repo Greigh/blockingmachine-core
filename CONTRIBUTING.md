@@ -1,13 +1,13 @@
 # Contributing to @blockingmachine/core
 
-Thank you for your interest in contributing to BlockingMachine! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Blockingmachine! This document provides guidelines and instructions for contributing.
 
 ## Development Setup
 
 1. Fork and clone the repository:
 ```bash
-git clone https://github.com/yourusername/BlockingMachine.git
-cd BlockingMachine/packages/core
+git clone https://github.com/yourusername/Blockingmachine.git
+cd Blockingmachine/packages/core
 ```
 
 2. Install dependencies:
