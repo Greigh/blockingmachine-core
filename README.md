@@ -4,7 +4,7 @@ Core functionality for Blockingmachine, providing robust filter list processing 
 
 [![LICENSE: BSD-3-Clause](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![GitHub Actions](https://github.com/greigh/blockingmachine-cli/workflows/CI/badge.svg)](https://github.com/greigh/blockingmachine-cli/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/greigh/Blockingmachine-CLI)](https://github.com/greigh/Blockingmachine-CLI/releases)
+[![GitHub Release](https://img.shields.io/github/v/release/greigh/Blockingmachine-CLI)](https://github.com/greigh/Blockingmachine-core/releases)
 [![NPM VERSION](https://badge.fury.io/js/@blockingmachine%2Fcore.svg)](https://www.npmjs.com/package/@blockingmachine/core)
 [![NPM DOWNLOADS](https://img.shields.io/npm/dt/@blockingmachine/core)](https://www.npmjs.com/package/@blockingmachine/core)
 [![CODE SIZE](https://img.shields.io/github/languages/code-size/greigh/blockingmachine-core)](https://github.com/greigh/blockingmachine-core)
