@@ -1,13 +1,13 @@
-import type { StoredRule } from '../RuleStore.js';
+import type { StoredRule } from "../RuleStore.js";
 
-export type FilterFormat = 
-  | 'adguard'
-  | 'abp'
-  | 'hosts'
-  | 'dnsmasq'
-  | 'unbound'
-  | 'domains'
-  | 'plain';
+export type FilterFormat =
+  | "adguard"
+  | "abp"
+  | "hosts"
+  | "dnsmasq"
+  | "unbound"
+  | "domains"
+  | "plain";
 
 export interface FilterMetadata {
   title: string;
@@ -26,157 +26,172 @@ export interface FilterMetadata {
   };
 }
 
-export function generateHeader(metadata: FilterMetadata, format: FilterFormat): string {
+export function generateHeader(
+  metadata: FilterMetadata,
+  format: FilterFormat,
+): string {
   // Common header for all filter list formats
   const lines: string[] = [];
-  
-  if (format === 'adguard' || format === 'abp') {
+
+  if (format === "adguard" || format === "abp") {
     // AdGuard/ABP format headers
-    lines.push('[Adblock Plus 2.0]');
-    lines.push('! Title: ' + metadata.title);
-    lines.push('! Description: ' + metadata.description);
-    lines.push('! Homepage: ' + metadata.homepage);
-    lines.push('! Version: ' + metadata.version);
-    lines.push('! Last updated: ' + metadata.lastUpdated);
-    
+    lines.push("[Adblock Plus 2.0]");
+    lines.push("! Title: " + metadata.title);
+    lines.push("! Description: " + metadata.description);
+    lines.push("! Homepage: " + metadata.homepage);
+    lines.push("! Version: " + metadata.version);
+    lines.push("! Last updated: " + metadata.lastUpdated);
+
     if (metadata.expires) {
-      lines.push('! Expires: ' + metadata.expires);
+      lines.push("! Expires: " + metadata.expires);
     }
-    
+
     if (metadata.author) {
-      lines.push('! Author: ' + metadata.author);
+      lines.push("! Author: " + metadata.author);
     }
-    
+
     if (metadata.license) {
-      lines.push('! License: ' + metadata.license);
+      lines.push("! License: " + metadata.license);
     }
-    
+
     // Stats
-    lines.push('! Total rules: ' + metadata.stats.totalRules);
-    lines.push('! Unique rules: ' + metadata.stats.uniqueRules);
-    
+    lines.push("! Total rules: " + metadata.stats.totalRules);
+    lines.push("! Unique rules: " + metadata.stats.uniqueRules);
+
     if (metadata.stats.blockingRules !== undefined) {
-      lines.push('! Blocking rules: ' + metadata.stats.blockingRules);
+      lines.push("! Blocking rules: " + metadata.stats.blockingRules);
     }
-    
+
     if (metadata.stats.exceptionRules !== undefined) {
-      lines.push('! Exception rules: ' + metadata.stats.exceptionRules);
+      lines.push("! Exception rules: " + metadata.stats.exceptionRules);
     }
-    
+
     // Format-specific
-    if (format === 'adguard') {
-      lines.push('! Format: AdGuard');
-      lines.push('! This file contains rules optimized for AdGuard products');
+    if (format === "adguard") {
+      lines.push("! Format: AdGuard");
+      lines.push("! This file contains rules optimized for AdGuard products");
     } else {
-      lines.push('! Format: Adblock Plus');
-      lines.push('! This file contains rules compatible with Adblock Plus and uBlock Origin');
+      lines.push("! Format: Adblock Plus");
+      lines.push(
+        "! This file contains rules compatible with Adblock Plus and uBlock Origin",
+      );
     }
-  } else if (format === 'hosts') {
+  } else if (format === "hosts") {
     // Hosts file format headers
-    lines.push('# ' + metadata.title);
-    lines.push('# Description: ' + metadata.description);
-    lines.push('# Homepage: ' + metadata.homepage);
-    lines.push('# Version: ' + metadata.version);
-    lines.push('# Last updated: ' + metadata.lastUpdated);
-    lines.push('# Total domains: ' + metadata.stats.uniqueRules);
-    lines.push('#');
-    lines.push('# Format: Hosts');
-    lines.push('# This file is in hosts file format for use with system hosts file');
-    lines.push('#');
-    lines.push('# ===============================================================');
-    lines.push('');
-    lines.push('127.0.0.1 localhost');
-    lines.push('::1 localhost');
-    lines.push('');
-    lines.push('# Blockingmachine Generated Rules Below');
-  } else if (format === 'dnsmasq') {
+    lines.push("# " + metadata.title);
+    lines.push("# Description: " + metadata.description);
+    lines.push("# Homepage: " + metadata.homepage);
+    lines.push("# Version: " + metadata.version);
+    lines.push("# Last updated: " + metadata.lastUpdated);
+    lines.push("# Total domains: " + metadata.stats.uniqueRules);
+    lines.push("#");
+    lines.push("# Format: Hosts");
+    lines.push(
+      "# This file is in hosts file format for use with system hosts file",
+    );
+    lines.push("#");
+    lines.push(
+      "# ===============================================================",
+    );
+    lines.push("");
+    lines.push("127.0.0.1 localhost");
+    lines.push("::1 localhost");
+    lines.push("");
+    lines.push("# Blockingmachine Generated Rules Below");
+  } else if (format === "dnsmasq") {
     // DNSMasq format headers
-    lines.push('# ' + metadata.title);
-    lines.push('# Description: ' + metadata.description);
-    lines.push('# Homepage: ' + metadata.homepage);
-    lines.push('# Version: ' + metadata.version);
-    lines.push('# Last updated: ' + metadata.lastUpdated);
-    lines.push('# Format: dnsmasq');
-    lines.push('# Rules count: ' + metadata.stats.uniqueRules);
-  } else if (format === 'unbound') {
+    lines.push("# " + metadata.title);
+    lines.push("# Description: " + metadata.description);
+    lines.push("# Homepage: " + metadata.homepage);
+    lines.push("# Version: " + metadata.version);
+    lines.push("# Last updated: " + metadata.lastUpdated);
+    lines.push("# Format: dnsmasq");
+    lines.push("# Rules count: " + metadata.stats.uniqueRules);
+  } else if (format === "unbound") {
     // Unbound format headers
-    lines.push('# ' + metadata.title);
-    lines.push('# Description: ' + metadata.description);
-    lines.push('# Homepage: ' + metadata.homepage);
-    lines.push('# Version: ' + metadata.version);
-    lines.push('# Last updated: ' + metadata.lastUpdated);
-    lines.push('# Format: Unbound');
-    lines.push('# Rules count: ' + metadata.stats.uniqueRules);
-    lines.push('');
-    lines.push('server:');
-  } else if (format === 'domains') {
+    lines.push("# " + metadata.title);
+    lines.push("# Description: " + metadata.description);
+    lines.push("# Homepage: " + metadata.homepage);
+    lines.push("# Version: " + metadata.version);
+    lines.push("# Last updated: " + metadata.lastUpdated);
+    lines.push("# Format: Unbound");
+    lines.push("# Rules count: " + metadata.stats.uniqueRules);
+    lines.push("");
+    lines.push("server:");
+  } else if (format === "domains") {
     // Plain domains list
-    lines.push('# ' + metadata.title);
-    lines.push('# Description: ' + metadata.description);
-    lines.push('# Homepage: ' + metadata.homepage);
-    lines.push('# Version: ' + metadata.version);
-    lines.push('# Last updated: ' + metadata.lastUpdated);
-    lines.push('# Format: Domain list');
-    lines.push('# Rules count: ' + metadata.stats.uniqueRules);
+    lines.push("# " + metadata.title);
+    lines.push("# Description: " + metadata.description);
+    lines.push("# Homepage: " + metadata.homepage);
+    lines.push("# Version: " + metadata.version);
+    lines.push("# Last updated: " + metadata.lastUpdated);
+    lines.push("# Format: Domain list");
+    lines.push("# Rules count: " + metadata.stats.uniqueRules);
   } else {
     // Plain/default format headers
-    lines.push('# ' + metadata.title);
-    lines.push('# Description: ' + metadata.description);
-    lines.push('# Homepage: ' + metadata.homepage);
-    lines.push('# Version: ' + metadata.version);
-    lines.push('# Last updated: ' + metadata.lastUpdated);
-    lines.push('# Rules count: ' + metadata.stats.uniqueRules);
+    lines.push("# " + metadata.title);
+    lines.push("# Description: " + metadata.description);
+    lines.push("# Homepage: " + metadata.homepage);
+    lines.push("# Version: " + metadata.version);
+    lines.push("# Last updated: " + metadata.lastUpdated);
+    lines.push("# Rules count: " + metadata.stats.uniqueRules);
   }
-  
+
   // Generator info for all formats
-  lines.push(format === 'adguard' || format === 'abp' ? '! ' : '# ' + 
-    'Generated by Blockingmachine v' + metadata.version);
-  lines.push('');
-  
-  return lines.join('\n');
+  lines.push(
+    format === "adguard" || format === "abp"
+      ? "! "
+      : "# " + "Generated by Blockingmachine v" + metadata.version,
+  );
+  lines.push("");
+
+  return lines.join("\n");
 }
 
 export function formatRule(rule: StoredRule, format: FilterFormat): string {
   // Return early if rule isn't valid
-  if (!rule.raw) return '';
-  
+  if (!rule.raw) return "";
+
   // For exception rules in formats that don't support exceptions natively
-  if (rule.isException && ['hosts', 'dnsmasq', 'unbound', 'domains'].includes(format)) {
+  if (
+    rule.isException &&
+    ["hosts", "dnsmasq", "unbound", "domains"].includes(format)
+  ) {
     // Skip exception rules for these formats, or handle with a comment
     return `# EXCEPTION: ${rule.raw}`;
   }
-  
+
   switch (format) {
-    case 'hosts':
+    case "hosts":
       // Extract domain from rule
       if (rule.domain) {
         return `0.0.0.0 ${rule.domain}`;
       }
-      return '';
-    
-    case 'dnsmasq':
+      return "";
+
+    case "dnsmasq":
       if (rule.domain) {
         return `address=/${rule.domain}/0.0.0.0`;
       }
-      return '';
-    
-    case 'unbound':
+      return "";
+
+    case "unbound":
       if (rule.domain) {
         return `  local-zone: "${rule.domain}" always_nxdomain`;
       }
-      return '';
-    
-    case 'domains':
+      return "";
+
+    case "domains":
       if (rule.domain) {
         return rule.domain;
       }
-      return '';
-    
-    case 'plain':
-      return rule.raw || '';
-    
-    case 'adguard':
-    case 'abp':
+      return "";
+
+    case "plain":
+      return rule.raw || "";
+
+    case "adguard":
+    case "abp":
     default:
       // For AdGuard/ABP formats, return the raw rule
       return rule.raw;
@@ -186,15 +201,15 @@ export function formatRule(rule: StoredRule, format: FilterFormat): string {
 export function generateFilterList(
   rules: StoredRule[],
   metadata: FilterMetadata,
-  format: FilterFormat
+  format: FilterFormat,
 ): string {
   const header = generateHeader(metadata, format);
-  
+
   // Process rules based on format
   const formattedRules = rules
-    .map(rule => formatRule(rule, format))
+    .map((rule) => formatRule(rule, format))
     .filter(Boolean) // Remove empty strings
-    .join('\n');
-  
+    .join("\n");
+
   return header + formattedRules;
 }

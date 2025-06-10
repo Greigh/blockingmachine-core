@@ -16,7 +16,7 @@ export interface PerformanceConfig {
     };
     compression: {
       enabled: boolean;
-      level: 'balanced' | 'aggressive' | 'conservative';
+      level: "balanced" | "aggressive" | "conservative";
     };
   };
 }
@@ -25,7 +25,7 @@ export const defaultPerformance: PerformanceConfig = {
   caching: {
     enabled: true,
     ttl: 3600,
-    maxSize: '100mb',
+    maxSize: "100mb",
   },
   processing: {
     batchSize: 1000,
@@ -39,7 +39,7 @@ export const defaultPerformance: PerformanceConfig = {
     },
     compression: {
       enabled: true,
-      level: 'balanced',
+      level: "balanced",
     },
   },
 };

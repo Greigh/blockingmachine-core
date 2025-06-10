@@ -1,13 +1,13 @@
-export type SupportedFormat = 
-  | 'hosts'
-  | 'dnsmasq'
-  | 'unbound'
-  | 'bind'
-  | 'privoxy'
-  | 'shadowrocket'
-  | 'adguard'
-  | 'abp'
-  | 'all';
+export type SupportedFormat =
+  | "hosts"
+  | "dnsmasq"
+  | "unbound"
+  | "bind"
+  | "privoxy"
+  | "shadowrocket"
+  | "adguard"
+  | "abp"
+  | "all";
 
 // Add the missing properties to the interface
 export interface FilterListMetadata {
@@ -16,7 +16,7 @@ export interface FilterListMetadata {
   homepage: string;
   version: string;
   lastUpdated: string;
-  
+
   // Add these new properties
   license?: string;
   generatorVersion?: string;
@@ -36,4 +36,4 @@ export interface ExportOptions {
 }
 
 // Re-export RuleStore types with explicit file extension
-export type { RuleType, StoredRule, RuleMetadata } from './RuleStore.js';
+export type { RuleType, StoredRule, RuleMetadata } from "./RuleStore.js";

@@ -1,4 +1,4 @@
-import { StoredRule, RuleMetadata } from './RuleStore.js';
+import { StoredRule, RuleMetadata } from "./RuleStore.js";
 
 // Extend the imported RuleMetadata to include missing properties
 // Make required fields non-optional to match RuleMetadata
@@ -15,7 +15,7 @@ interface ExtendedRuleMetadata {
     priority: number;
   };
   tags: string[]; // Make this required to match RuleMetadata
-  
+
   // Optional fields can remain optional
   domain?: string;
   selector?: string;
@@ -62,49 +62,49 @@ export class RuleDeduplicator {
    * @returns A normalized string key, or an empty string if the rule is invalid/empty.
    */
   stripRule(rule: string | null | undefined): string {
-    if (!rule) return '';
+    if (!rule) return "";
     try {
       const originalRule = rule;
       let stripped = rule;
-      const isException = stripped.startsWith('@@');
+      const isException = stripped.startsWith("@@");
       if (isException) {
         stripped = stripped.slice(2); // Here the @@ prefix is removed
       }
 
       // 1. Extract and Normalize Key Modifiers/Selectors
       const parts = {
-        domain: (stripped.match(/\$domain=([^,$/]+)/)?.[1] || '')
+        domain: (stripped.match(/\$domain=([^,$/]+)/)?.[1] || "")
           .toLowerCase()
           .trim(),
         // Ensure modifiers are handled correctly even if no '$' is present
-        modifiers: (stripped.match(/\$([^#]*?)(?:##|#\?#|#@#|$)/)?.[1] || '')
-          .split(',')
-          .map((m) => m.split('=')[0].toLowerCase().trim())
-          .filter((m) => m && m !== 'domain') // Ensure 'domain' modifier itself isn't included here
+        modifiers: (stripped.match(/\$([^#]*?)(?:##|#\?#|#@#|$)/)?.[1] || "")
+          .split(",")
+          .map((m) => m.split("=")[0].toLowerCase().trim())
+          .filter((m) => m && m !== "domain") // Ensure 'domain' modifier itself isn't included here
           .sort()
-          .join(','),
-        selector: (stripped.match(/(?:##|#@#)(.+)/)?.[1] || '')
+          .join(","),
+        selector: (stripped.match(/(?:##|#@#)(.+)/)?.[1] || "")
           .toLowerCase()
-          .replace(/\s+/g, ' ')
+          .replace(/\s+/g, " ")
           .trim(),
-        extendedSelector: (stripped.match(/#\?#(.+)/)?.[1] || '')
+        extendedSelector: (stripped.match(/#\?#(.+)/)?.[1] || "")
           .toLowerCase()
-          .replace(/\s+/g, ' ')
+          .replace(/\s+/g, " ")
           .trim(),
       };
 
       // 2. Remove all modifiers, selectors, options from the core rule string
       stripped = stripped
-        .replace(/\$.*$/, '') // Remove modifiers section
-        .replace(/(?:##|#@#|#\?#).*$/, '') // Remove cosmetic/extended selectors
-        .replace(/!\s*.*$/, ''); // Remove comments
+        .replace(/\$.*$/, "") // Remove modifiers section
+        .replace(/(?:##|#@#|#\?#).*$/, "") // Remove cosmetic/extended selectors
+        .replace(/!\s*.*$/, ""); // Remove comments
 
       // 3. Refined Normalization of the Core Target String
       stripped = stripped
-        .replace(/^(?:https?:\/\/)?(?:www\.)?/, '') // Remove http/https, www.
-        .replace(/[?#].*$/, '') // Remove Query String and Anchor
-        .replace(/[\^/]+$/, '') // Remove one or MORE trailing ^ or /
-        .replace(/\.+$/, '') // Remove trailing dots
+        .replace(/^(?:https?:\/\/)?(?:www\.)?/, "") // Remove http/https, www.
+        .replace(/[?#].*$/, "") // Remove Query String and Anchor
+        .replace(/[\^/]+$/, "") // Remove one or MORE trailing ^ or /
+        .replace(/\.+$/, "") // Remove trailing dots
         .toLowerCase() // Lowercase the result
         .trim(); // Final trim
 
@@ -113,10 +113,10 @@ export class RuleDeduplicator {
         !stripped &&
         (parts.modifiers || parts.selector || parts.extendedSelector)
       ) {
-        stripped = 'modifier_or_selector_rule'; // Use a placeholder key
+        stripped = "modifier_or_selector_rule"; // Use a placeholder key
       } else if (!stripped) {
         // console.warn(`[stripRule] Stripping resulted in empty key for: ${originalRule}`);
-        return ''; // Return empty string if truly empty after stripping
+        return ""; // Return empty string if truly empty after stripping
       }
 
       // 4. Build the Normalized Key
@@ -129,8 +129,8 @@ export class RuleDeduplicator {
       ].filter(Boolean); // Filter out empty strings
 
       // The prefix is added back only at the very end
-      let normalized = components.join('|');
-      if (isException) normalized = '@@' + normalized;
+      let normalized = components.join("|");
+      if (isException) normalized = "@@" + normalized;
 
       return normalized;
     } catch (error: any) {
@@ -144,9 +144,10 @@ export class RuleDeduplicator {
    * @param rules An array of StoredRule objects.
    * @returns A Promise resolving to an array of unique StoredRule objects with merged metadata.
    */
-  async processRules(rules: StoredRule[]): Promise<StoredRule[]> { // Add parameter type and return type
+  async processRules(rules: StoredRule[]): Promise<StoredRule[]> {
+    // Add parameter type and return type
     if (!Array.isArray(rules) || rules.length === 0) {
-      console.warn('No rules to process');
+      console.warn("No rules to process");
       return [];
     }
 
@@ -157,13 +158,13 @@ export class RuleDeduplicator {
     console.log(`\nProcessing ${rules.length} rules for deduplication...`);
 
     // First pass - group rules
-    console.log('Starting rule grouping...');
+    console.log("Starting rule grouping...");
     let processedCount = 0;
     for (const rule of rules) {
       processedCount++;
       try {
         // Check if rule and originalRule are valid
-        if (!rule?.originalRule || typeof rule.originalRule !== 'string') {
+        if (!rule?.originalRule || typeof rule.originalRule !== "string") {
           this.stats.skipped++;
           continue;
         }
@@ -187,20 +188,24 @@ export class RuleDeduplicator {
         } else {
           ruleGroups.set(stripped, [rule]);
         }
-      } catch (error: any) { // Add type to error
+      } catch (error: any) {
+        // Add type to error
         console.warn(
-          'Failed to process rule:',
-          rule?.originalRule || 'undefined',
-          error.message
+          "Failed to process rule:",
+          rule?.originalRule || "undefined",
+          error.message,
         );
         this.stats.skipped++;
       }
     }
-    console.log(`Finished grouping ${processedCount} rules into ${ruleGroups.size} groups.`);
+    console.log(
+      `Finished grouping ${processedCount} rules into ${ruleGroups.size} groups.`,
+    );
 
     // Second pass - identify and process duplicates
     this.filteredRules.clear(); // Ensure map is empty before filling
-    for (const [stripped, group] of ruleGroups.entries()) { // Use entries() for clarity
+    for (const [stripped, group] of ruleGroups.entries()) {
+      // Use entries() for clarity
       try {
         if (group.length > 1) {
           this.stats.duplicates += group.length - 1;
@@ -209,16 +214,18 @@ export class RuleDeduplicator {
           bestRule.metadata = this.mergeMetadata(group, bestRule);
           this.filteredRules.set(stripped, bestRule);
           this.stats.merged++;
-        } else if (group.length === 1) { // Handle single rule group explicitly
+        } else if (group.length === 1) {
+          // Handle single rule group explicitly
           this.filteredRules.set(stripped, group[0]);
         }
         // If group is somehow empty (shouldn't happen with above logic), do nothing
-      } catch (error: any) { // Add type to error
-        console.warn('Failed to process rule group:', stripped, error.message);
+      } catch (error: any) {
+        // Add type to error
+        console.warn("Failed to process rule group:", stripped, error.message);
         this.stats.conflicts++;
         // Keep the first rule as fallback if group exists
         if (group && group.length > 0) {
-            this.filteredRules.set(stripped, group[0]);
+          this.filteredRules.set(stripped, group[0]);
         }
       }
     }
@@ -228,13 +235,14 @@ export class RuleDeduplicator {
       ...this.stats,
       uniqueRules: this.filteredRules.size,
       duplicateGroups: ruleGroups.size - this.filteredRules.size, // Groups that had > 1 rule
-      duplicatePercent: this.stats.total > 0
-          ? ((this.stats.duplicates / this.stats.total) * 100).toFixed(2) + '%'
-          : '0.00%',
+      duplicatePercent:
+        this.stats.total > 0
+          ? ((this.stats.duplicates / this.stats.total) * 100).toFixed(2) + "%"
+          : "0.00%",
     };
     this.stats = finalStats; // Update internal stats
 
-    console.log('\nDeduplication complete!');
+    console.log("\nDeduplication complete!");
     console.table(finalStats); // Use console.table for better output
 
     return Array.from(this.filteredRules.values());
@@ -245,15 +253,16 @@ export class RuleDeduplicator {
    * @param rules An array of StoredRule objects that are duplicates.
    * @returns The selected best StoredRule.
    */
-  selectBestRule(rules: StoredRule[]): StoredRule { // Add parameter type and return type
+  selectBestRule(rules: StoredRule[]): StoredRule {
+    // Add parameter type and return type
     // Filter out potentially null/undefined rules first
-    const validRules = rules.filter(r => r && r.originalRule);
+    const validRules = rules.filter((r) => r && r.originalRule);
     if (validRules.length === 0) {
-        // Should not happen if grouping is correct, but handle defensively
-        throw new Error("Cannot select best rule from empty or invalid group.");
+      // Should not happen if grouping is correct, but handle defensively
+      throw new Error("Cannot select best rule from empty or invalid group.");
     }
     if (validRules.length === 1) {
-        return validRules[0];
+      return validRules[0];
     }
 
     return validRules.reduce((best, current) => {
@@ -262,11 +271,13 @@ export class RuleDeduplicator {
 
       // Tie-breaking: prefer shorter original rule? Or rule from primary source?
       if (currentScore === bestScore) {
-          // Example: Prefer shorter rule
-          return (current.originalRule.length < best.originalRule.length) ? current : best;
+        // Example: Prefer shorter rule
+        return current.originalRule.length < best.originalRule.length
+          ? current
+          : best;
       }
 
-      return (currentScore > bestScore) ? current : best;
+      return currentScore > bestScore ? current : best;
     }); // No need for initial value if we ensure validRules is not empty
   }
 
@@ -276,17 +287,23 @@ export class RuleDeduplicator {
    * @param bestRule The StoredRule selected as the best.
    * @returns The merged RuleMetadata object.
    */
-  mergeMetadata(group: StoredRule[], bestRule: StoredRule): ExtendedRuleMetadata { // Add parameter types and return type
+  mergeMetadata(
+    group: StoredRule[],
+    bestRule: StoredRule,
+  ): ExtendedRuleMetadata {
+    // Add parameter types and return type
     try {
       // Start with a copy of the best rule's metadata or an empty object
-      const merged: MergedRuleMetadata = { ...(bestRule.metadata || {}) } as MergedRuleMetadata;
+      const merged: MergedRuleMetadata = {
+        ...(bestRule.metadata || {}),
+      } as MergedRuleMetadata;
 
       // Combine sources
       const sources = new Set<string>(merged.sources || []);
       group.forEach((rule) => {
         if (rule?.metadata?.sources) {
           rule.metadata.sources.forEach((source) => {
-            if (typeof source === 'string') sources.add(source);
+            if (typeof source === "string") sources.add(source);
           });
         }
       });
@@ -295,11 +312,14 @@ export class RuleDeduplicator {
       // Merge dates - keep earliest valid date string
       const dates = group
         .map((rule) => rule?.metadata?.dateAdded)
-        .filter((date): date is Date => date instanceof Date || 
-          (typeof date === 'string' && !isNaN(Date.parse(date))))
-        .map(date => date instanceof Date ? date : new Date(date))
+        .filter(
+          (date): date is Date =>
+            date instanceof Date ||
+            (typeof date === "string" && !isNaN(Date.parse(date))),
+        )
+        .map((date) => (date instanceof Date ? date : new Date(date)))
         .sort((a, b) => a.getTime() - b.getTime());
-      
+
       if (dates.length > 0) {
         merged.dateAdded = dates[0];
       } else {
@@ -312,7 +332,7 @@ export class RuleDeduplicator {
         const ruleMetadata = rule?.metadata as ExtendedRuleMetadata;
         if (ruleMetadata?.modifiers) {
           ruleMetadata.modifiers.forEach((mod) => {
-            if (typeof mod === 'string') modifiers.add(mod);
+            if (typeof mod === "string") modifiers.add(mod);
           });
         }
       });
@@ -329,31 +349,34 @@ export class RuleDeduplicator {
       if (merged.enabled === undefined) merged.enabled = true;
       if (!merged.sourceInfo) {
         merged.sourceInfo = {
-          category: 'unknown',
+          category: "unknown",
           trusted: false,
-          url: '',
-          priority: 0
+          url: "",
+          priority: 0,
         };
       }
       if (!merged.tags) merged.tags = [];
-      
+
       return merged;
     } catch (error: any) {
-      console.warn('Failed to merge metadata:', error.message);
+      console.warn("Failed to merge metadata:", error.message);
       // Return with all required fields populated
-      return { 
+      return {
         ...bestRule.metadata,
         sources: bestRule.metadata?.sources || [],
         dateAdded: bestRule.metadata?.dateAdded || new Date(),
         lastUpdated: bestRule.metadata?.lastUpdated || new Date(),
-        enabled: bestRule.metadata?.enabled !== undefined ? bestRule.metadata.enabled : true,
+        enabled:
+          bestRule.metadata?.enabled !== undefined
+            ? bestRule.metadata.enabled
+            : true,
         sourceInfo: bestRule.metadata?.sourceInfo || {
-          category: 'unknown',
+          category: "unknown",
           trusted: false,
-          url: '',
-          priority: 0
+          url: "",
+          priority: 0,
         },
-        tags: bestRule.metadata?.tags || []
+        tags: bestRule.metadata?.tags || [],
       } as ExtendedRuleMetadata;
     }
   }
@@ -363,14 +386,16 @@ export class RuleDeduplicator {
    * @param rule The StoredRule object to score.
    * @returns A numerical score.
    */
-  getRuleScore(rule: StoredRule | null | undefined): number { // Add parameter type and return type
+  getRuleScore(rule: StoredRule | null | undefined): number {
+    // Add parameter type and return type
     let score = 0;
     if (!rule?.metadata || !rule.originalRule) return score; // Check originalRule too
     const originalRuleLower = rule.originalRule.toLowerCase(); // Safe now
 
     // Base scores
-    if (rule.metadata.sources?.length) score += rule.metadata.sources.length * 2;
-    
+    if (rule.metadata.sources?.length)
+      score += rule.metadata.sources.length * 2;
+
     // Cast to ExtendedRuleMetadata to access modifiers and attribution
     const metadata = rule.metadata as ExtendedRuleMetadata;
     if (Array.isArray(metadata.modifiers) && metadata.modifiers.length > 0) {
@@ -379,18 +404,19 @@ export class RuleDeduplicator {
     if (metadata.dateAdded) score += 5; // Consider date validity?
 
     // Bonus scores
-    if (originalRuleLower.includes('$important')) score += 10;
+    if (originalRuleLower.includes("$important")) score += 10;
     // Access sourceInfo safely
     if (metadata.sourceInfo?.trusted) score += 15;
     // Access attribution safely
-    if (metadata.attribution?.toLowerCase().includes('daniel hipskind')) score += 20; // Lowercase for comparison
+    if (metadata.attribution?.toLowerCase().includes("daniel hipskind"))
+      score += 20; // Lowercase for comparison
 
     // Domain-specific rules
-    if (originalRuleLower.includes('$domain=')) score += 8;
+    if (originalRuleLower.includes("$domain=")) score += 8;
 
     // Exact matches (needs refinement - what defines "exact"?)
     // This check is very basic, might need adjustment based on `stripRule` logic
-    const corePart = rule.originalRule.split('$')[0].split('#')[0].trim();
+    const corePart = rule.originalRule.split("$")[0].split("#")[0].trim();
     if (!/[*^|]/.test(corePart)) score += 5;
 
     return score;

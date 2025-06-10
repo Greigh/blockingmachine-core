@@ -5,17 +5,20 @@ Thank you for your interest in contributing to Blockingmachine! This document pr
 ## Development Setup
 
 1. Fork and clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/Blockingmachine.git
 cd Blockingmachine/packages/core
 ```
 
 2. Install dependencies:
+
 ```bash
 npm install
 ```
 
 3. Run tests:
+
 ```bash
 npm test
 ```
@@ -23,11 +26,13 @@ npm test
 ## Development Workflow
 
 1. Create a new branch:
+
 ```bash
 git checkout -b feature/your-feature-name
 ```
 
 2. Make your changes and ensure:
+
    - Tests pass (`npm test`)
    - Code is properly formatted (`npm run format`)
    - Linter is happy (`npm run lint`)
@@ -71,6 +76,7 @@ feat: add new rule processing feature
 - Maintain existing tests
 - Aim for high test coverage
 - Run tests before submitting PR:
+
 ```bash
 npm test
 ```
@@ -100,7 +106,7 @@ When contributing new files, include this copyright header at the top:
 /**
  * Copyright (c) 2025, Daniel Hipskind
  * All rights reserved.
- * 
+ *
  * This source code is licensed under the BSD-3-Clause license found in the
  * LICENSE file in the root directory of this source tree.
  */
@@ -109,6 +115,7 @@ When contributing new files, include this copyright header at the top:
 ### License Compliance
 
 Ensure your contributions:
+
 - Do not include code from projects with incompatible licenses
 - Maintain all existing copyright and license notices
 - Include attribution for any third-party code or resources
