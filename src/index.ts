@@ -12,7 +12,7 @@ export {
   generateFilterList,
 } from "./export/advanced-formatter.js";
 export { RuleDeduplicator } from "./RuleDeduplicator.js";
-export { downloadAndParseSource, parseFilterList } from "./RuleProcessor.js";
+export { downloadAndParseSource, parseFilterList, RuleProcessor } from "./RuleProcessor.js";
 export { RuleStore } from "./RuleStore.js";
 
 // Other type exports
