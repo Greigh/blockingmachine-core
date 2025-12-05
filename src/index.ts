@@ -6,11 +6,9 @@ export { defaultFilterMeta } from "./config/meta.js";
 export { createPaths } from "./config/paths.js";
 export { defaultPerformance } from "./config/performance.js";
 export { exportWithOptions } from "./export/index.js";
-export { RuleType, RuleModifier, RuleMetadata } from "./RuleStore.js";
-export {
-  FilterFormat,
-  generateFilterList,
-} from "./export/advanced-formatter.js";
+export type { RuleType, RuleModifier, RuleMetadata } from "./RuleStore.js";
+export type { FilterFormat } from "./export/advanced-formatter.js";
+export { generateFilterList } from "./export/advanced-formatter.js";
 export { RuleDeduplicator } from "./RuleDeduplicator.js";
 export { downloadAndParseSource, parseFilterList, RuleProcessor } from "./RuleProcessor.js";
 export { RuleStore } from "./RuleStore.js";

@@ -11,7 +11,18 @@
     "declaration": true,
     "skipLibCheck": true, // Add this to skip checking libraries
     "sourceMap": true,
-    "composite": true
+    "composite": true,
+    "isolatedModules": true
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "tests",
+    "src/__tests__",
+    "package.json",
+    "*.md"
+  ]
 }

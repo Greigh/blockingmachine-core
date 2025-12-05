@@ -19,15 +19,13 @@ export {
   createPaths,
   defaultPerformance,
   exportWithOptions,
-
-  // Types (using type modifiers)
-  RuleType,
-  RuleModifier,
-  RuleMetadata,
 };
 
 // Re-export types
 export type {
+  RuleType,
+  RuleModifier,
+  RuleMetadata,
   FilterMetaConfig,
   ExportOptions,
   FilterListMetadata,

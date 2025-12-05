@@ -1,27 +1,24 @@
-import { StoredRule, RuleMetadata } from "./RuleStore.js";
+import type { RuleMetadata, StoredRule } from "./RuleStore.js";
 
-// Extend the imported RuleMetadata to include missing properties
-// Make required fields non-optional to match RuleMetadata
-interface ExtendedRuleMetadata {
-  // Match the non-optional fields from RuleMetadata
-  sources: string[]; // Remove the optional marker (?)
-  dateAdded: Date; // Make this required to match RuleMetadata
-  lastUpdated: Date; // Make this required to match RuleMetadata
-  enabled: boolean; // Make this required to match RuleMetadata
+// Reuse RuleMetadata and StoredRule from RuleStore to avoid duplicated/ diverging type definitions.
+// Define an internal ExtendedRuleMetadata that makes some commonly-required fields explicitly required
+// while still aligning with the canonical `RuleMetadata` shape.
+type ExtendedRuleMetadata = RuleMetadata & {
+  sources: string[];
+  dateAdded: Date;
+  lastUpdated: Date;
+  enabled: boolean;
   sourceInfo: {
     category: string;
     trusted: boolean;
     url: string;
     priority: number;
   };
-  tags: string[]; // Make this required to match RuleMetadata
-
-  // Optional fields can remain optional
-  domain?: string;
-  selector?: string;
+  tags: string[];
+  // Optional fields that exist on some metadata records
   modifiers?: string[];
   attribution?: string;
-}
+};
 
 // --- Interfaces/Types ---
 interface DeduplicatorStats {
